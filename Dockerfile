@@ -1,25 +1,21 @@
+# Use the official Python image
 FROM python:3.9-slim
 
-# ติดตั้ง dependencies ที่จำเป็นสำหรับ dlib
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    cmake \
-    libopenblas-dev \
-    liblapack-dev \
-    libx11-dev \
-    libgtk2.0-dev \
-    libboost-python-dev \
-    && rm -rf /var/lib/apt/lists/*
-
+# Set working directory
 WORKDIR /app
 
-# คัดลอก requirements.txt และติดตั้ง Python packages
+# Install dependencies
 COPY requirements.txt .
-RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# คัดลอกโค้ดแอป
+# Copy application code
 COPY . .
 
-# ระบุคำสั่งเริ่มต้น
+# Set environment variables
+ENV PORT=8000
+
+# Expose the port
+EXPOSE 8000
+
+# Run the FastAPI application with Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
